@@ -2,7 +2,7 @@
 
 # Compile with:
 # as -gen-debug rpn.asm -o rpn.o
-# ld -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lc rpn.o -o rpn
+# ld rpn.o -o rpn
 
 #Simple rpn calculator
 
