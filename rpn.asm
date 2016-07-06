@@ -13,9 +13,6 @@
 
 .section .data
 
-output:
-	.asciz "%d"
-
 .section .text
 .global _start
 _start:
