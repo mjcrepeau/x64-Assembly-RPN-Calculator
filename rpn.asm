@@ -12,6 +12,11 @@
 # r15 - holds number of values on the result stack
 
 .section .data
+err_msg:
+	.asciz "There was an error.\n"
+
+output:
+	.space 32, 0x0
 
 .section .text
 .global _start
@@ -151,10 +156,61 @@ result:
 	jne error
 
 	pop %rdi
+	call itoa
+
+	mov %rax, %rdx		# rax contains the length
+	mov $1, %rax		# Syscall for write (man 2 write)
+	mov $1, %rdi		# Write to stdout
+	mov $output, %rsi	# Use the buffer
+	syscall
+
+	# Exit
 	mov $60, %rax
 	syscall
 
+itoa:
+	mov $output, %r8	# Buffer
+	mov $10, %r9		# Base (we're usign decimal)
+	mov %rdi, %rax		# Number to convert -> rax
+	mov $0, %r10		# Length of new string, to be incremented
+
+	# Add a '-' if it's negative
+	cmp $0, %rax
+	jl write_neg
+
+write_num:
+	xor %rdx, %rdx		# Clear for division
+	idiv %r9		# Divide the number by 10
+	add $48, %rdx		# Add 48 to remainder to convert to ascii
+	movb %dl, (%r8)		# Move the converted byte to the buffer
+	inc %r8			# Increment the buffer pointer
+	add $1, %r10		# Increment the length
+	cmp $0, %rax		# If the quotient is 0, we're done
+	je write_end
+	jmp write_num
+
+write_neg:
+	movb $0x2d, (%r8)	# Write a '-' to the buffer
+	inc %r8
+	add $1, %r10
+	imul $-1, %rax		# Make the number positive now and convert to ascii
+	jmp write_num
+
+write_end:
+	movb $0x0a, (%r8)	# Write a newline
+	inc %r8
+	add $1, %r10
+	movb $0, (%r8)		# Write a null byte
+	inc %r8
+	mov %r10, %rax
+	ret
+
 error:
-	mov $69, %rdi
+	# Print the error message by calling write (man 2 write)
+	mov $1, %rax
+	mov $1, %rdi
+	mov $err_msg, %rsi
+	mov $20, %rdx
+	syscall
 	mov $60, %rax
 	syscall
