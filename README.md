@@ -1,7 +1,7 @@
 ## x86_64-Assembly-RPN-Calculator
 This is a simple RPN (postfix) calculator to compute expressions at the command line.
 
-This is project uses AT&T syntax x64 assembly.
+This project uses AT&T syntax x64 assembly.
 
 ## Compilation
 You should be able to compile on any x64 Linux machine with the following commands:
