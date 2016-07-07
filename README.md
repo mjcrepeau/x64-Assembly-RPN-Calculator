@@ -5,8 +5,8 @@ This is a project using AT&T syntax x86_64 assembly. It was written and compiled
 
 ## Compilation
 You should be able to compile on any 64-bit Intel linux machine with the following commands:
-`as rpn.asm -o rpn.o`
-`ld rpn.o -o rpn`
+1. `as rpn.asm -o rpn.o`
+2. `ld rpn.o -o rpn`
 
 ## Usage
 To compute the result of '3 4 +', at a terminal type:
