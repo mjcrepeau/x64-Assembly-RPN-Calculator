@@ -4,7 +4,7 @@ This is a simple RPN (postfix) calculator to compute expressions at the command 
 This is a project using AT&T syntax x86_64 assembly. It was written and compiled on a 64-bit Debian machine, and should work well on pretty much any 64-bit x86 linux distribution.
 
 ## Compilation
-You should be able to compile on any 64-bit Intel linux machine with the following commands:
+You should be able to compile on any 64-bit Linux Intel machine with the following commands:
 
 1. `as rpn.asm -o rpn.o`
 2. `ld rpn.o -o rpn`
