@@ -12,3 +12,7 @@ You should be able to compile on any 64-bit Linux Intel machine with the followi
 ## Usage
 To compute the result of '3 4 +', at a terminal type:
 `./rpn 3 4 +`
+
+The current operations are supported: addition (+), subtraction (-), multiplication (x), and division (/).
+
+NOTE: The multiplication symbol is not '*', as that is the wildcard character.
