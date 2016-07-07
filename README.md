@@ -16,3 +16,6 @@ To compute the result of '3 4 +', at a terminal type:
 The current operations are supported: addition (+), subtraction (-), multiplication (x), and division (/).
 
 NOTE: The multiplication symbol is not an asterisk (*), as that is the wildcard character.
+
+## Bugs
+So currently itoa converts the int into a string that is backwards... I am currently working on a new method of writing the string backwards to fix this.

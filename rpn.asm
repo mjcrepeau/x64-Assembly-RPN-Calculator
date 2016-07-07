@@ -22,7 +22,7 @@ output:
 .global _start
 _start:
 	mov (%rsp), %r13	# The first thing on the stack is the number of command line args
-	sub $1, %r13		# Don't count argv[0]
+	sub $1, %r13		# Don't count argv[0] (the program name)
 
 	# Prologue
 	pushq %rbp
@@ -41,7 +41,7 @@ read_token:
 
 	# Calculate the next argument's address
 	movq $3, %rax	# Skip rbp, argc, argv[0] on the stack
-	add %r14, %rax
+	add %r14, %rax	# Skip processed arguments
 
 	# Move the next argument into rax for evaluation
 	mov (%rbp, %rax, 8), %rax
@@ -50,7 +50,7 @@ read_token:
 	add $1, %r14
 
 	# First, check if it is an operator (+, -, x, /)
-	mov %rax, %rdi
+	mov %rax, %rdi	# In preparation for a possible atoi call
 	xor %rax, %rax
 	movb (%rdi), %al
 
@@ -66,7 +66,7 @@ read_token:
 	cmpb $0x2f, %al
 	je divide
 
-	# Otherwise, it is a value so convert to int, push it onto the stack, and start over
+	# Otherwise, assume it is a value so convert to int, push it onto the stack, and start over
 	call atoi
 	pushq %rax
 	add $1, %r15
@@ -165,6 +165,11 @@ result:
 	syscall
 
 	# Exit
+
+	# epilogue
+        movq %rbp, %rsp
+        popq %rbp
+	
 	mov $60, %rax
 	syscall
 
