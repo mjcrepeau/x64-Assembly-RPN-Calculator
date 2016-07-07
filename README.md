@@ -15,4 +15,4 @@ To compute the result of '3 4 +', at a terminal type:
 
 The current operations are supported: addition (+), subtraction (-), multiplication (x), and division (/).
 
-NOTE: The multiplication symbol is not '*', as that is the wildcard character.
+NOTE: The multiplication symbol is not an asterisk (*), as that is the wildcard character.
