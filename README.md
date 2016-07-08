@@ -13,8 +13,7 @@ You should be able to compile on any x64 Linux machine with the following comman
 To compute the result of '3 4 +', at a terminal type:
 `./rpn 3 4 +`
 
-To input a negative number, for example to compute '12 -2 x', you must type:
-
+To input a negative number, for example to compute '12 -2 x', type:
 `./rpn 12 2- x`
 
 The current operations are supported: addition (+), subtraction (-), multiplication (x), and division (/).
