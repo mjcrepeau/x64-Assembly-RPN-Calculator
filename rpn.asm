@@ -75,8 +75,13 @@ atoi:
 
 atoi_loop:
 	movb (%rdi), %bl	# Move a byte from the string into bl
+
 	cmpb $0x00, %bl		# Check for null byte (end of string)
 	je atoi_ret		# Return if end of string
+
+	cmpb $0x2d, %bl		# Check for negative number (i.e. -2 must be entered 2-)
+	je atoi_isneg
+
 	sub $48, %bl		# Subtract 48 to go from ascii value to decimal
 	imul %rcx, %rax		# Multiply previous number by the multiplier
 	add %rbx, %rax		# Add new decimal part to previous number
@@ -84,6 +89,11 @@ atoi_loop:
 	jmp atoi_loop
 
 atoi_ret:
+	ret
+
+atoi_isneg:
+	imul $-1, %rax		# Make it negative
+	inc %rdi		# Prevents a weird bug that prints a comma; not sure why this happens
 	ret
 
 addition:
@@ -186,7 +196,7 @@ itoa:
 	# We need to write a '-' when we're done
 	mov $0, %r10		# Negative marker
 	cmp $0, %rax
-	jl isneg
+	jl itoa_isneg
 
 write_num:
 	xor %rdx, %rdx		# Clear for division
@@ -198,7 +208,7 @@ write_num:
 	je write_end
 	jmp write_num
 
-isneg:
+itoa_isneg:
 	mov $1, %r10		# This means later we need to write a '-'
 	imul $-1, %rax		# Make the number positive now and convert to ascii
 	jmp write_num

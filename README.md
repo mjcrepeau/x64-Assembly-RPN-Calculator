@@ -13,6 +13,10 @@ You should be able to compile on any x64 Linux machine with the following comman
 To compute the result of '3 4 +', at a terminal type:
 `./rpn 3 4 +`
 
+To input a negative number, for example to compute '12 -2 x', you must type:
+
+`./rpn 12 2- x`
+
 The current operations are supported: addition (+), subtraction (-), multiplication (x), and division (/).
 
 NOTE: The multiplication symbol is not an asterisk (*), as that is the wildcard character.
@@ -23,11 +27,7 @@ The code is thoroughly commented (probably too thorough in some cases) so that a
 Since this is a simple implementation, it only works with integers, and thus performs integer division.
 
 ## Bugs/Issues
-Currently, there is no support for negative input numbers. For example:
-
-`./rpn 3 -7 x` should produce -21, but gives an error.
-
-This is the next improvement I plan to make.
+None that I know of...
 
 ## Resources
 Here are some websites I used that helped with this project.
