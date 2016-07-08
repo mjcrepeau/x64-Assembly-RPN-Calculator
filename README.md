@@ -17,5 +17,14 @@ The current operations are supported: addition (+), subtraction (-), multiplicat
 
 NOTE: The multiplication symbol is not an asterisk (*), as that is the wildcard character.
 
-## Bugs
-Currently itoa converts the int into a string that is backwards... I am currently working on a new method of writing the string backwards to fix this.
+## Other Details
+The code is thoroughly commented (probably too thorough in some cases) so that anyone with basic assembly knowledge can follow along.
+
+Since this is a simple implementation, it only works with integers, and thus performs integer division.
+
+## Bugs/Issues
+Currently, there is no support for negative input numbers. For example:
+
+`./rpn 3 -7 x` should produce -21, but gives an error.
+
+This is the next improvement I plan to make.

@@ -16,23 +16,20 @@ err_msg:
 	.asciz "There was an error.\n"
 
 output:
-	.space 32, 0x0
+	.space 32, 0x0		# Create an empty buffer, 32 bytes (the result will always fit in this)
 
 .section .text
 .global _start
 _start:
-	mov (%rsp), %r13	# The first thing on the stack is the number of command line args
+	mov (%rsp), %r13	# The first thing on the stack is argc, save it
 	sub $1, %r13		# Don't count argv[0] (the program name)
 
-	# Prologue
-	pushq %rbp
-	mov %rsp, %rbp		# Save rsp for future use
+	push %rbp		# Save rbp, as is convention
+	mov %rsp, %rbp		# Save rsp for future use, rsp will change as we push/pop
 
-	# Keep track of processed arguments
-	mov $0, %r14
+	mov $0, %r14		# Keep track of processed arguments
 
-	# Keep track of the current number of result values on the stack
-	mov $0, %r15
+	mov $0, %r15		# Keep track of the current number of result values on the stack
 
 read_token:
 	# If we have processed all arguments, the stack should have the answer
@@ -40,8 +37,8 @@ read_token:
 	je result
 
 	# Calculate the next argument's address
-	movq $3, %rax	# Skip rbp, argc, argv[0] on the stack
-	add %r14, %rax	# Skip processed arguments
+	movq $3, %rax		# Skip rbp, argc, argv[0] on the stack
+	add %r14, %rax		# Skip processed arguments
 
 	# Move the next argument into rax for evaluation
 	mov (%rbp, %rax, 8), %rax
@@ -50,7 +47,7 @@ read_token:
 	add $1, %r14
 
 	# First, check if it is an operator (+, -, x, /)
-	mov %rax, %rdi	# In preparation for a possible atoi call
+	mov %rax, %rdi		# In preparation for a possible atoi call
 	xor %rax, %rax
 	movb (%rdi), %al
 
@@ -73,8 +70,8 @@ read_token:
 	jmp read_token
 
 atoi:
-	movq $0, %rax	# Will hold the return value
-	mov $10, %rcx 	# Will hold the multiplier (10, since we're using decimal)
+	movq $0, %rax		# Will hold the return value
+	mov $10, %rcx 		# Will hold the multiplier (10, since we're using decimal)
 
 atoi_loop:
 	movb (%rdi), %bl	# Move a byte from the string into bl
@@ -143,7 +140,7 @@ divide:
 	pop %r8
 	pop %rax
 	xor %rdx, %rdx
-	idiv %r8	# Take rax, divide by r8, and store the quotient in rax and remainder in rdx
+	idiv %r8		# Take rax, divide by r8, and store the quotient in rax and remainder in rdx
 
 	# Push the result, subtract 1 from result stack count
 	push %rax
@@ -158,56 +155,77 @@ result:
 	pop %rdi
 	call itoa
 
-	mov %rax, %rdx		# rax contains the length
+	mov %rax, %rsi		# rax contains the buffer, this is for the call to write
+	mov %rax, %rdi		# This is for the call to strlen
+
+	call strlen
+
+	mov %rax, %rdx		# rax now contains the length of the buffer
 	mov $1, %rax		# Syscall for write (man 2 write)
 	mov $1, %rdi		# Write to stdout
-	mov $output, %rsi	# Use the buffer
+	#mov $output, %rsi	# Use the buffer
 	syscall
 
-	# Exit
-
+# Exit
 	# epilogue
         movq %rbp, %rsp
         popq %rbp
-	
+
 	mov $60, %rax
 	syscall
 
 itoa:
 	mov $output, %r8	# Buffer
+	add $30, %r8		# Move to almost the end, leaving a null byte
+	movb $0x0a, (%r8)	# Write newline
+	dec %r8			# Decrement buffer
+
 	mov $10, %r9		# Base (we're usign decimal)
 	mov %rdi, %rax		# Number to convert -> rax
-	mov $0, %r10		# Length of new string, to be incremented
 
-	# Add a '-' if it's negative
+	# We need to write a '-' when we're done
+	mov $0, %r10		# Negative marker
 	cmp $0, %rax
-	jl write_neg
+	jl isneg
 
 write_num:
 	xor %rdx, %rdx		# Clear for division
 	idiv %r9		# Divide the number by 10
 	add $48, %rdx		# Add 48 to remainder to convert to ascii
 	movb %dl, (%r8)		# Move the converted byte to the buffer
-	inc %r8			# Increment the buffer pointer
-	add $1, %r10		# Increment the length
+	dec %r8			# Decrement the buffer pointer
 	cmp $0, %rax		# If the quotient is 0, we're done
 	je write_end
 	jmp write_num
 
-write_neg:
-	movb $0x2d, (%r8)	# Write a '-' to the buffer
-	inc %r8
-	add $1, %r10
+isneg:
+	mov $1, %r10		# This means later we need to write a '-'
 	imul $-1, %rax		# Make the number positive now and convert to ascii
 	jmp write_num
 
 write_end:
-	movb $0x0a, (%r8)	# Write a newline
+	cmp $0, %r10
+	jne write_neg
+	mov %r8, %rax		# Return a pointer to the beginning of the string
+	ret
+
+write_neg:
+	movb $0x2d, (%r8)	# Write a '-' to the buffer
+	mov %r8, %rax		# Return a pointer to the beginning of the string
+	ret
+
+strlen:
+	mov $0, %rax		# Holds the size, to be incremented
+	mov %rdi, %r8		# Holds the buffer
+
+strlen_loop:
+	cmp $0, (%r8)		# Check for null byte
+	je strlen_end
 	inc %r8
-	add $1, %r10
-	movb $0, (%r8)		# Write a null byte
-	inc %r8
-	mov %r10, %rax
+	inc %rax
+	jmp strlen_loop
+
+strlen_end:
 	ret
 
 error:
