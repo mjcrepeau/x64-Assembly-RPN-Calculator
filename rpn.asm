@@ -77,7 +77,7 @@ atoi_loop:
 	movb (%rdi), %bl	# Move a byte from the string into bl
 
 	cmpb $0x00, %bl		# Check for null byte (end of string)
-	je atoi_ret		# Return if end of string
+	je atoi_end		# Return if end of string
 
 	cmpb $0x2d, %bl		# Check for negative number (i.e. -2 must be entered 2-)
 	je atoi_isneg
@@ -88,7 +88,7 @@ atoi_loop:
 	inc %rdi		# Increment the address (move forward one byte in the string)
 	jmp atoi_loop
 
-atoi_ret:
+atoi_end:
 	ret
 
 atoi_isneg:
@@ -177,9 +177,8 @@ result:
 	syscall
 
 # Exit
-	# epilogue
         movq %rbp, %rsp
-        popq %rbp
+        popq %rbp		# Restore rbp, as is convention
 
 	mov $60, %rax
 	syscall
@@ -198,28 +197,28 @@ itoa:
 	cmp $0, %rax
 	jl itoa_isneg
 
-write_num:
+itoa_loop:
 	xor %rdx, %rdx		# Clear for division
 	idiv %r9		# Divide the number by 10
 	add $48, %rdx		# Add 48 to remainder to convert to ascii
 	movb %dl, (%r8)		# Move the converted byte to the buffer
 	dec %r8			# Decrement the buffer pointer
 	cmp $0, %rax		# If the quotient is 0, we're done
-	je write_end
-	jmp write_num
+	je itoa_end
+	jmp itoa_loop
 
 itoa_isneg:
 	mov $1, %r10		# This means later we need to write a '-'
 	imul $-1, %rax		# Make the number positive now and convert to ascii
-	jmp write_num
+	jmp itoa_loop
 
-write_end:
+itoa_end:
 	cmp $0, %r10
-	jne write_neg
+	jne itoa_isneg
 	mov %r8, %rax		# Return a pointer to the beginning of the string
 	ret
 
-write_neg:
+itoa_isneg:
 	movb $0x2d, (%r8)	# Write a '-' to the buffer
 	mov %r8, %rax		# Return a pointer to the beginning of the string
 	ret
