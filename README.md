@@ -28,3 +28,14 @@ Currently, there is no support for negative input numbers. For example:
 `./rpn 3 -7 x` should produce -21, but gives an error.
 
 This is the next improvement I plan to make.
+
+## Resources
+Here are some websites I used that helped with this project.
+
+https://software.intel.com/en-us/articles/introduction-to-x64-assembly
+
+http://eli.thegreenplace.net/2013/07/24/displaying-all-argv-in-x64-assembly
+
+http://www.jegerlehner.ch/intel/IntelCodeTable.pdf
+
+http://0xax.blogspot.com/2014/09/say-hello-to-x64-assembly-part-3.html
