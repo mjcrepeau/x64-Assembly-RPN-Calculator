@@ -4,7 +4,7 @@
 # as -gen-debug rpn.asm -o rpn.o
 # ld rpn.o -o rpn
 
-#Simple rpn calculator
+# Simple rpn calculator
 
 # Registers in use:
 # r13 - holds argc

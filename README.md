@@ -1,4 +1,4 @@
-## x86_64-Assembly-RPN-Calculator
+## x64-Assembly-RPN-Calculator
 This is a simple RPN (postfix) calculator to compute expressions at the command line.
 
 This project uses AT&T syntax x64 assembly.
