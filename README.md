@@ -23,7 +23,7 @@ NOTE: The multiplication symbol is not an asterisk (*), as that is the wildcard 
 ## Other Details
 The code is thoroughly commented (probably too thorough in some cases) so that anyone with basic assembly knowledge can follow along.
 
-Since this is a simple implementation, it only works with integers, and thus performs integer division.
+Because this is a simple implementation, it only works with integers, and thus performs integer division.
 
 ## Bugs/Issues
 None that I know of...
